@@ -28,32 +28,51 @@ rankhospital <- function(state, outcome, num = "best") {
   
   data <- data[which(data$State == state),]
   
-  ## suppress the NAs being introduced warning.
-  data <- suppressWarnings(data[which.min(data[,outcomeCol]),])
+  ## list of all hospitals in date
+  hospitals <- unique(data$Hospital.Name)
   
-  ## Sort result alphabetically by hospital name
-  ## sort(data[,2])
+  ## validate state parameter
+  validState <- is.element(state, states)
+  if(!validState) {
+    stop("invalid state")
+  }
+  
+  ## trim data to only columns we care about
+  data <- data[,c(2,outcomeCol)]
+  
+  ## Make sure column in numeric
+  data[,2] <- suppressWarnings(as.numeric(data[,2]))
+  
+  ## Sort result mortality rate then, alphabetically by hospital name
+  data <- data[order(data[,2], data[,1]),]
+  
+  ## filter to only complete cases
+  data <- data[complete.cases(data),]
   
   if(typeof(num) == "character") {
     
     if(num == "best") {
       ## result <- head[data[,2], 1]
-      data <- suppressWarnings(data[which.max(data[,outcomeCol]),])
-      
+      ## result <- suppressWarnings(data[which.max(data[,2]),])
+      result <- head(data[,1], n=1)
     }
     
     if(num == "worst") {
-      data <- suppressWarnings(data[which.min(data[,outcomeCol]),])
+      ##result <- suppressWarnings(data[which.min(data[,2]),])
+      result <- tail(data[,1], n=1)
     }
+    
   }
   
   if(typeof(num) == "integer" || typeof(num) == "double") {
     ## result <- head[data[,2], n=num]
-    data <- suppressWarnings(data[which.min(data[,outcomeCol]),])
+    ##data <- suppressWarnings(data[which.min(data[,outcomeCol]),])
+    ##result <- data[num,]
+    result <- data[num,][1,1]
   }
   
   ## Return hospital name in that state with lowest 30-day death rate
   ## In the case of a tie only return the first hospital 
-  head(data[,2], 1)
+  result
   
 }

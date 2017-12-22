@@ -28,8 +28,6 @@ best <- function(state, outcome) {
     outcomeCol = 23
   }
   
-  best <- data[,]
-  
   data <- data[which(data$State == state),]
   ## suppress the NAs being introduced warning.
   data <- suppressWarnings(data[which.min(data[,outcomeCol]),])
