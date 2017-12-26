@@ -28,35 +28,35 @@ rankall <- function(outcome, num="best") {
   datalist = list()
   
   for(i in states) {
-    data <- data[which(data$State == i),]
+    stateData <- data[which(data$State == i),]
     
-    ## Make sure column in numeric
-    data[,3] <- suppressWarnings(as.numeric(data[,3]))
+    ## Make sure column is numeric
+    stateData[,3] <- suppressWarnings(as.numeric(stateData[,3]))
     
     ## Sort result mortality rate then, alphabetically by hospital name
-    data <- data[order(data[,3], data[,1]),]
+    stateData <- stateData[order(stateData[,3], stateData[,1]),]
     
     if(typeof(num) == "character") {
       
       if(num == "best") {
-        name <- head(data[,1], n=1)
+        name <- head(stateData[,1], n=1)
       }
       
       if(num == "worst") {
-        name <- tail(data[,1], n=1)
+        name <- tail(stateData[,1], n=1)
       }
       
     }
     
     if(typeof(num) == "integer" || typeof(num) == "double") {
-      name <- data[num,][1,1]
+      name <- stateData[num,][1,1]
     }
     
     ### TODO: Figure out how to combine data!!! 
     dat <- data.frame(hospital = name, state = i)
-    row <- c(state=i, hospital=name)
+    ##row <- c(state=i, hospital=name)
     
-    result <- rbind(result, row)
+    result <- rbind(result, dat)
   }
   
   result
